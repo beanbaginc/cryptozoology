@@ -88,3 +88,31 @@ class InvalidatableMixin:
         It may also be called more than once.
         """
         raise NotImplementedError
+
+
+class SensitiveBytes(InvalidatableMixin, bytearray):
+    """A byte array that clears once invalidated.
+
+    This can be used as a context manager, clearing the resulting array
+    once the context closes in order to ensure sensitive data isn't
+    sitting around in memory.
+
+    Version Added:
+        1.0
+    """
+
+    def is_valid(self) -> bool:
+        """Return whether the bytes are still valid.
+
+        Returns:
+            bool:
+            ``True`` if valid, or ``False`` if cleared.
+        """
+        return bool(self)
+
+    def invalidate(self) -> None:
+        """Invalidate the bytes.
+
+        This will clear the bytes from memory.
+        """
+        self.clear()
