@@ -1,0 +1,72 @@
+[build-system]
+requires = [
+    'buildthings',
+]
+build-backend = 'buildthings.backend'
+
+
+[project]
+dynamic = ['version']
+
+name = 'cryptozoology'
+description = "Cryptography companion for secrets management and key storage"
+authors = [
+    {name = 'Beanbag, Inc.', email='questions@beanbaginc.com'},
+]
+license = 'MIT'
+license-files = ['LICENSE']
+readme = 'README.rst'
+
+requires-python = '>=3.10'
+
+dependencies = [
+    'cryptography~=49.0.0',
+    'registries~=1.0.0',
+]
+
+keywords = [
+    'aws',
+    'ec',
+    'encryption',
+    'vault',
+    'aes',
+    'crypto',
+    'icies',
+    'keys',
+]
+
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Build Tools',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+
+
+[project.urls]
+Homepage = 'https://github.com/beanbaginc/cryptozoology'
+Documentation = 'https://github.com/beanbaginc/cryptozoology'
+Repository = 'https://github.com/beanbaginc/cryptozoology'
+
+
+[tool.setuptools.dynamic]
+version = { attr = 'cryptozoology.get_package_version' }
+
+
+[tool.setuptools.package-data]
+cryptozoology = ['py.typed']
+
+
+[tool.setuptools.packages.find]
+where = ['.']
+include = ['cryptozoology*']
+namespaces = false
