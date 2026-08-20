@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from typelets.funcs import KwargsDict
 
     from cryptozoology.utils.encoding import BytesLike
+    from cryptozoology.utils.random import Nonce
 
     class EncryptedDataKwargs(TypedDict):
         """Keyword arguments supported by the EncryptedData constructor.
@@ -321,7 +322,9 @@ class BaseKey(InvalidatableMixin):
         self,
         plaintext: BytesLike,
         *,
+        aad: (bytes | None) = None,
         alg: (str | None) = None,
+        nonce: (Nonce | None) = None,
     ) -> EncryptedData:
         """Encrypt a plaintext with this key.
 
@@ -329,10 +332,25 @@ class BaseKey(InvalidatableMixin):
             plaintext (bytes or bytearray or memoryview):
                 The plaintext content to encrypt.
 
+            aad (bytes, optional):
+                The Additional Authenticated Data to use during encryption.
+
+                This may not be supported by all key types.
+
             alg (str, optional):
                 The supported algorithm used for encryption.
 
                 If not provided, the key will choose a default algorithm.
+
+            nonce (cryptozoology.utils.random.Nonce, optional):
+                An explicit (randomly-generated) nonce used for the encryption.
+
+                If not provided, and supported by the key type, the key must
+                create a new one randomly.
+
+                Callers should only provide a value here if they have taken
+                care to securely, randomly generate a nonce. In most cases,
+                they should let this function handle it.
 
         Returns:
             EncryptedData:
@@ -349,6 +367,7 @@ class BaseKey(InvalidatableMixin):
         ciphertext: BytesLike,
         *,
         alg: str,
+        aad: (bytes | None) = None,
     ) -> SensitiveBytes:
         """Decrypt a ciphertext with this key.
 
@@ -358,6 +377,11 @@ class BaseKey(InvalidatableMixin):
 
             alg (str):
                 The algorithm that was used for encryption.
+
+            aad (bytes, optional):
+                The AAD that was used during encryption.
+
+                This may not be supported by all key types.
 
         Returns:
             cryptozoology.utils.encoding.SensitiveBytes:

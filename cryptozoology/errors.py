@@ -49,6 +49,14 @@ class KeyUnwrapError(CryptozoologyError):
     """
 
 
+class SecretDecodeError(CryptozoologyError):
+    """An error decoding a secret.
+
+    Version Added:
+        1.0
+    """
+
+
 class UnsupportedAlgorithmError(CryptozoologyError):
     """An error indicating an operation with an unsupported algorithm.
 
