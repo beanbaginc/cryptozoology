@@ -173,10 +173,10 @@ class ECPrivateKey(BasePKIPrivateKey['ECPublicKey',
             The resulting shared key.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 This key is no longer valid.
         """
-        self.check_valid()
+        self.assert_valid()
 
         impl_private_key = self.impl_private_key
         impl_public_key = public_key.impl_public_key

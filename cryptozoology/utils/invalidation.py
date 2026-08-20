@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from cryptozoology.errors import InvalidatedError
+
 if TYPE_CHECKING:
     from types import TracebackType
     from typing import Self
@@ -39,9 +41,15 @@ class InvalidatableMixin:
         Once exited, the object will be invalidated.
 
         Returns:
-            object:
+            InvalidatableMixin:
             This instance, as the context value.
+
+        Raises:
+            cryptozoology.errors.InvalidatedError:
+                The object is no longer valid.
         """
+        self.assert_valid()
+
         return self
 
     def __exit__(
@@ -65,6 +73,24 @@ class InvalidatableMixin:
                 The traceback, if an exception was raised.
         """
         self.invalidate()
+
+    def assert_valid(self) -> None:
+        """Assert that the object is still valid.
+
+        This should be called internally before performing operations using
+        state that might become invalidated.
+
+        Raises:
+            cryptozoology.errors.InvalidatedError:
+                The object is no longer valid.
+        """
+        if not self.is_valid():
+            name = type(self).__name__
+
+            raise InvalidatedError(
+                f'This {name} object has been invalidated and can no '
+                f'longer be used.'
+            )
 
     def is_valid(self) -> bool:
         """Return whether this object is still valid.

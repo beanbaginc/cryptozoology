@@ -524,7 +524,7 @@ class AESKey(BaseBytesKey):
             cryptozoology.errors.UnsupportedAlgorithmError:
                 The provided algorithm was unsupported.
         """
-        self.check_valid()
+        self.assert_valid()
 
         if not alg:
             alg = f'AES-{self.key_size}-GCM'
@@ -608,7 +608,7 @@ class AESKey(BaseBytesKey):
             cryptozoology.errors.UnsupportedAlgorithmError:
                 The provided algorithm was unsupported.
         """
-        self.check_valid()
+        self.assert_valid()
 
         mode, mode_info = self._get_enc_mode_info_for_alg(alg)
 
@@ -677,7 +677,7 @@ class AESKey(BaseBytesKey):
             cryptozoology.errors.UnsupportedAlgorithmError:
                 The provided algorithm was unsupported.
         """
-        self.check_valid()
+        self.assert_valid()
 
         if not alg:
             alg = f'AES-{self.key_size}-KW'
@@ -728,7 +728,7 @@ class AESKey(BaseBytesKey):
             cryptozoology.errors.UnsupportedAlgorithmError:
                 The provided algorithm was unsupported.
         """
-        self.check_valid()
+        self.assert_valid()
 
         mode_info = self._get_keywrap_mode_info_for_alg(alg)
 

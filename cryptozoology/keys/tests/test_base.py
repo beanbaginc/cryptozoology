@@ -6,7 +6,7 @@ import hashlib
 
 import pytest
 
-from cryptozoology.errors import KeyInvalidatedError
+from cryptozoology.errors import InvalidatedError
 from cryptozoology.keys.base import BaseKey
 
 
@@ -22,7 +22,7 @@ class _DummyKey(BaseKey):
         return self._data is not None
 
     def get_fingerprint_bytes(self) -> bytes:
-        self.check_valid()
+        self.assert_valid()
 
         assert self._data is not None
 
@@ -48,12 +48,12 @@ class TestBaseKey:
 
         assert not key.is_valid()
 
-    def test_check_valid_raises_when_invalidated(self) -> None:
+    def test_assert_valid_raises_when_invalidated(self) -> None:
         key = _DummyKey(b'data')
         key.invalidate()
 
-        with pytest.raises(KeyInvalidatedError):
-            key.check_valid()
+        with pytest.raises(InvalidatedError):
+            key.assert_valid()
 
     def test_fingerprint_sha256(self) -> None:
         key = _DummyKey(b'some-key-material')

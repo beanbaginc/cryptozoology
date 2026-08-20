@@ -23,10 +23,10 @@ class DecryptionError(CryptozoologyError):
     """
 
 
-class KeyInvalidatedError(CryptozoologyError):
-    """Error indicating a key has been invalidated.
+class InvalidatedError(CryptozoologyError):
+    """Error indicating an object has been invalidated.
 
-    Invalidated keys can no longer be used.
+    Invalidated objects can no longer be used.
 
     Version Added:
         1.0

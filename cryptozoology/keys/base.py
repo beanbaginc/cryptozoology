@@ -17,7 +17,6 @@ from cryptography.hazmat.primitives.serialization import (
     PublicFormat,
 )
 
-from cryptozoology.errors import KeyInvalidatedError
 from cryptozoology.utils.invalidation import (
     InvalidatableMixin,
     SensitiveBytes,
@@ -267,7 +266,7 @@ class BaseKey(InvalidatableMixin):
         This is cached for repeated calls.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         if not (fingerprint := self._fingerprint_sha256):
@@ -300,7 +299,7 @@ class BaseKey(InvalidatableMixin):
             The bytes used to generate the fingerprint.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         raise NotImplementedError
@@ -313,7 +312,7 @@ class BaseKey(InvalidatableMixin):
             The bytes of the key.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         raise NotImplementedError
@@ -442,20 +441,6 @@ class BaseKey(InvalidatableMixin):
         """
         self._fingerprint_sha256 = None
 
-    def check_valid(self) -> None:
-        """Check whether the key is valid.
-
-        This must be called internally before performing operations using
-        the key, in order to check whether it's valid or has become
-        invalidated.
-
-        Raises:
-            cryptozoology.errors.KeyInvalidatedError:
-                The key is no longer valid.
-        """
-        if not self.is_valid():
-            raise KeyInvalidatedError()
-
 
 class BaseBytesKey(BaseKey):
     """Base class for a key defined as a series of bytes.
@@ -517,10 +502,10 @@ class BaseBytesKey(BaseKey):
             The bytes of the key.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
-        self.check_valid()
+        self.assert_valid()
 
         return self._key_bytes
 
@@ -532,7 +517,7 @@ class BaseBytesKey(BaseKey):
             The bytes used to generate the fingerprint.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         return self.to_bytes()
@@ -601,7 +586,7 @@ class BasePKIPublicKey(Generic[_PKIPrivateKeyType,
             The bytes used to generate the fingerprint.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         return self.to_bytes()
@@ -614,10 +599,10 @@ class BasePKIPublicKey(Generic[_PKIPrivateKeyType,
             The bytes of the key.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
-        self.check_valid()
+        self.assert_valid()
 
         impl_public_key = self.impl_public_key
         assert impl_public_key is not None
@@ -697,7 +682,7 @@ class BasePKIPrivateKey(Generic[_PKIPublicKeyType,
             BasePKIPublicKey:
             The private key's associated public key.
         """
-        self.check_valid()
+        self.assert_valid()
 
         public_key = self._public_key
 
@@ -723,7 +708,7 @@ class BasePKIPrivateKey(Generic[_PKIPublicKeyType,
             The bytes used to generate the fingerprint.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
         return self.get_public_key().get_fingerprint_bytes()
@@ -744,10 +729,10 @@ class BasePKIPrivateKey(Generic[_PKIPublicKeyType,
             The bytes of the key.
 
         Raises:
-            cryptozoology.errors.KeyInvalidatedError:
+            cryptozoology.errors.InvalidatedError:
                 The key is no longer valid.
         """
-        self.check_valid()
+        self.assert_valid()
 
         impl_private_key = self.impl_private_key
         assert impl_private_key is not None

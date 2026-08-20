@@ -11,7 +11,7 @@ from unittest import TestCase
 
 from cryptography.hazmat.primitives.asymmetric import ec
 
-from cryptozoology.errors import KeyInvalidatedError
+from cryptozoology.errors import InvalidatedError
 from cryptozoology.keys.ec import ECPublicKey
 
 
@@ -49,7 +49,12 @@ class ECPublicKeyTests(TestCase):
         with ECPublicKey.from_bytes(EC_PUBLIC_KEY_BYTES) as public_key:
             public_key.fingerprint_sha256
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This ECPublicKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             public_key.fingerprint_sha256
 
         self.assertIsNone(public_key._fingerprint_sha256)
@@ -127,5 +132,10 @@ class ECPublicKeyTests(TestCase):
         with ECPublicKey.from_bytes(EC_PUBLIC_KEY_BYTES) as public_key:
             pass
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This ECPublicKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             public_key.to_bytes()

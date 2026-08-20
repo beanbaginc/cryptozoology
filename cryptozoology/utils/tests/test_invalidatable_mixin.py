@@ -6,8 +6,10 @@ Version Added:
 
 from __future__ import annotations
 
+import re
 from unittest import TestCase
 
+from cryptozoology.errors import InvalidatedError
 from cryptozoology.utils.invalidation import InvalidatableMixin
 
 
@@ -45,6 +47,28 @@ class InvalidatableMixinTests(TestCase):
         obj = None
         self.assertIn('invalidated', tracking)
 
+    def test_assert_valid_with_valid(self) -> None:
+        """Testing InvalidatableMixin.assert_valid when valid"""
+        obj = _MyObject(set())
+
+        # This should not raise an exception.
+        obj.assert_valid()
+
+        self.assertTrue(obj.is_valid())
+
+    def test_assert_valid_with_invalid(self) -> None:
+        """Testing InvalidatableMixin.assert_valid when invalid"""
+        obj = _MyObject(set())
+        obj.invalidate()
+
+        message = (
+            'This _MyObject object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
+            obj.assert_valid()
+
     def test_context(self) -> None:
         """Testing InvalidatableMixin as context manager"""
         tracking: set[str] = set()
@@ -55,6 +79,20 @@ class InvalidatableMixinTests(TestCase):
 
         self.assertIn('invalidated', tracking)
         self.assertFalse(obj.is_valid())
+
+    def test_context_after_invalidation(self) -> None:
+        """Testing InvalidatableMixin as context manager after invalidation"""
+        with _MyObject(set()) as obj:
+            pass
+
+        message = (
+            'This _MyObject object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
+            with obj:
+                pass
 
     def test_context_with_exception(self) -> None:
         """Testing InvalidatableMixin as context manager with an exception

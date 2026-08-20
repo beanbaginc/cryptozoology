@@ -10,7 +10,7 @@ import re
 from unittest import TestCase, skipUnless
 
 from cryptozoology.errors import (DecryptionError,
-                                  KeyInvalidatedError,
+                                  InvalidatedError,
                                   KeyUnwrapError,
                                   UnsupportedAlgorithmError)
 from cryptozoology.keys.aes import AESKey
@@ -547,7 +547,12 @@ class AESKeyTests(TestCase):
 
         self.assertFalse(aes_key.is_valid())
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             aes_key.decrypt(
                 aad=b'my-aad',
                 alg='AES-256-GCM',
@@ -618,7 +623,12 @@ class AESKeyTests(TestCase):
 
         self.assertFalse(aes_key.is_valid())
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             aes_key.encrypt(
                 aad=b'my-aad',
                 alg='AES-256-GCM',
@@ -674,7 +684,12 @@ class AESKeyTests(TestCase):
         with AESKey.from_bytes(AES_128_KEY_BYTES) as aes_key:
             aes_key.fingerprint_sha256
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             aes_key.fingerprint_sha256
 
         self.assertIsNone(aes_key._fingerprint_sha256)
@@ -689,7 +704,12 @@ class AESKeyTests(TestCase):
         with AESKey.from_bytes(AES_128_KEY_BYTES) as aes_key:
             pass
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             aes_key.to_bytes()
 
     def test_unwrap_key_after_invalidate(self) -> None:
@@ -699,7 +719,12 @@ class AESKeyTests(TestCase):
 
         self.assertFalse(aes_key.is_valid())
 
-        with self.assertRaises(KeyInvalidatedError):
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
+        with self.assertRaisesRegex(InvalidatedError, re.escape(message)):
             aes_key.unwrap_key(
                 wrapped_key_bytes=(
                     b'\x00\x00\x12i\xc1@\xf8\xe8q\xc3Q(3\x05\xba\x9cI\x88'
@@ -763,8 +788,13 @@ class AESKeyTests(TestCase):
 
         self.assertFalse(aes_key.is_valid())
 
+        message = (
+            'This AESKey object has been invalidated and can no '
+            'longer be used.'
+        )
+
         with (AESKey.from_bytes(AES_192_KEY_BYTES) as dek,
-              self.assertRaises(KeyInvalidatedError)):
+              self.assertRaisesRegex(InvalidatedError, re.escape(message))):
             aes_key.wrap_key(
                 dek,
                 alg='AES-256-KWP',
