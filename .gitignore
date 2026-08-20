@@ -1,7 +1,9 @@
 # Directories
 build
 dist
+docs/coderef/python
 __pycache__
+_build
 *.egg-info
 
 

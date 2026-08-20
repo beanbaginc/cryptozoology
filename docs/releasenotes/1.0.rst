@@ -1,0 +1,43 @@
+=================
+Cryptozoology 1.0
+=================
+
+**Release date:** TBD
+
+Cryptozoology is a companion to the popular Cryptography_ package,
+implementing common patterns for key and secrets management
+
+This helps projects manage sensitive data in a responsible way, using
+best practices for long-term storage and transmission of encrypted data.
+
+Cryptozoology was built to help develop `Review Board`_, the code review
+tool crafted for the modern world from Beanbag_, and we're making it available
+for use in other projects.
+
+
+.. _Beanbag: https://www.beanbaginc.com
+.. _Cryptography: https://cryptography.io/
+.. _Review Board: https://www.reviewboard.org
+
+
+Features in 1.0
+===============
+
+* **Secrets management**, supporting encoding and decoding of plaintext data.
+
+* **AES key management**, supporting key generation, deserialization,
+  encryption/decryption, key wrapping/unwrapping, key exchange, and key
+  derivation.
+
+* **Elliptic Curve key management**, supporting key generation,
+  deserialization, and ECDH key exchange.
+
+* **Project-defined key types** using :pypi:`registries`.
+
+* **Patterns for sensitive data management**
+
+
+Learn More
+==========
+
+See the :ref:`documentation <cryptozoology-docs>` for information.
