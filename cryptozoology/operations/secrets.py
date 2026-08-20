@@ -11,7 +11,7 @@ from urllib.parse import quote, unquote
 
 from cryptozoology.errors import CryptozoologyError, SecretDecodeError
 from cryptozoology.keys.aes import AESKey
-from cryptozoology.keys.ec import ECPrivateKey
+from cryptozoology.keys.registry import key_type_registry
 from cryptozoology.utils.encoding import b64u_decode, b64u_encode
 from cryptozoology.utils.invalidation import (InvalidatableMixin,
                                               SensitiveBytes)
@@ -28,16 +28,6 @@ if TYPE_CHECKING:
     #: Version Added:
     #:     1.0
     KekResolver: TypeAlias = Callable[[str], BaseKey | None]
-
-
-#: The known key classes usable for Secret encryption and key wrapping.
-#:
-#: Version Added:
-#:     1.0
-_KEY_CLASSES: Final[tuple[type[BaseKey], ...]] = (
-    AESKey,
-    ECPrivateKey,
-)
 
 
 #: A reserved list of field names to include in envelopes.
@@ -211,10 +201,9 @@ class Secret(InvalidatableMixin):
         }
 
         # Check if the encryption algorithm is supported.
-        for enc_key_cls in _KEY_CLASSES:
-            if enc_key_cls.supports_encryption_alg(enc_alg):
-                break
-        else:
+        enc_key_cls = key_type_registry.get_for_encryption_alg(enc_alg)
+
+        if enc_key_cls is None:
             raise SecretDecodeError(
                 f'Unsupported encryption algorithm {enc_alg!r}.'
             )
